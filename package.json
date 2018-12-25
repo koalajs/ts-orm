@@ -1,0 +1,31 @@
+{
+  "name": "ts-orm",
+  "version": "0.0.1",
+  "description": "a orm project for alicloud tablestore",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "release": "standard-version",
+    "eslint": "esw -w --clear"
+  },
+  "author": "Jon.Xia <xiajia@vip.qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.11.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-watch": "^4.0.2",
+    "jest": "^23.6.0",
+    "standard-version": "^4.4.0"
+  },
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "tablestore": "^4.1.0"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"]
+  }
+}
