@@ -72,30 +72,54 @@ const checkDataForGet = function (data) {
 
 const isNilOrEmpty = R.either(R.isNil, R.isEmpty)
 
-const checkConfig = function (data) {
-  if (isNilOrEmpty(data)) {
-    throw new Error('config配置是必须的, 需要执行.init')
+const checkConfig = function (config) {
+  if (isNilOrEmpty(config)) {
+    throw new Error('config配置是必须的,需要执行.init')
   }
+  const keys = R.keys(config)
+  const needKeys = ['accessKeyId', 'secretAccessKey', 'endpoint', 'instancename']
+  if (!R.equals(keys, needKeys)) {
+    throw new Error('config配置项错误， 必须包含： accessKeyId， secretAccessKey， endpoint， instancename')
+  }
+  return true
 }
 
 const checkParamTableName = function (data) {
   if (isNilOrEmpty(R.path(['params', 'tableName'], data))) {
-    throw new Error('table配置是必须， 需要执行.table')
+    throw new Error('table配置是必须，需要执行.table')
   }
+  if (!R.is(String, R.path(['params', 'tableName'], data))) {
+    throw new Error('table配置必须是一个字符串')
+  }
+  return true
 }
 
 const checkParamKey = function (data) {
   if (isNilOrEmpty(R.path(['params', 'primaryKey'], data))) {
-    throw new Error('keys配置是必须， 需要执行.table')
+    throw new Error('keys配置是必须，需要执行.table')
   }
+  if (!R.is(Object, R.path(['params', 'primaryKey'], data))) {
+    throw new Error('keys配置必须是一个Object')
+  }
+  return true
+}
+
+const checkParamStartKeys = function (data) {
+  throw new Error('start配置是必须的，需要执行.startKeys')
+}
+
+const test = function (data) {
+  return 'hello world'
 }
 
 module.exports = {
+  test,
   orm,
   isNilOrEmpty,
   checkConfig,
   checkParamTableName,
   checkParamKey,
+  checkParamStartKeys,
   checkDataForGet,
   checkDataForRange
 }
