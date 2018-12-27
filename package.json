@@ -9,6 +9,11 @@
     "eslint": "esw -w --clear"
   },
   "author": "Jon.Xia <xiajia@vip.qq.com>",
+  "homepage": "https://github.com/koalajs/ts-orm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koalajs/ts-orm"
+  },
   "license": "MIT",
   "devDependencies": {
     "eslint": "^5.11.0",
