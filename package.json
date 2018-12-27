@@ -1,6 +1,6 @@
 {
   "name": "ts-orm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "a orm project for alicloud tablestore",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,7 @@
     "standard-version": "^4.4.0"
   },
   "dependencies": {
+    "joi": "^14.3.0",
     "ramda": "^0.26.1",
     "tablestore": "^4.1.0"
   },
