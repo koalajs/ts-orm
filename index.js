@@ -1,6 +1,7 @@
 const TableStore = require('tablestore')
 const Long = TableStore.Long
 const R = require('ramda')
+const Joi = require('joi')
 
 const client = function (config) {
   return new Promise((resolve, reject) => {
@@ -28,7 +29,7 @@ const orm = {
     this.params = R.assoc('columnToGet', [...columns], this.params)
     return this
   },
-  maxVersion: function (v) {
+  versions: function (v) {
     this.params = R.assoc('maxVersions', v, this.params)
     return this
   },
@@ -39,12 +40,9 @@ const orm = {
     this.params = R.assoc('primaryKey', primaryKey, this.params)
     return this
   },
-  attr: function (attr) {
-    // 处理attr结构问题
-    return this
-  },
   getRow: function () {
-    checkDataForGet(this)
+    checkConfig(this.config)
+    checkDataForGet(this.params)
     return new Promise((resolve, reject) => {
       try {
         client(this.config).then(ts => ts.getRow(this.params)).then(data => {
@@ -60,66 +58,37 @@ const orm = {
   }
 }
 
-const checkDataForRange = function (data) {
+const checkConfig = function (data) {
+  const schema = Joi.object().keys({
+    accessKeyId: Joi.string().required(),
+    secretAccessKey: Joi.string().required(),
+    endpoint: Joi.string().required(),
+    instancename: Joi.string().required()
+  })
+  const result = Joi.validate(data, schema)// , (err, value) => {
+  if (result.error) {
+    console.log(`出现错误：${result.error.details[0]['message']}, 请确认参数是否已经合理设定！`)
+    throw new Error(result.error)
+  }
   return true
 }
 
 const checkDataForGet = function (data) {
-  checkConfig(data.config)
-  checkParamTableName(data)
-  checkParamKey(data)
-}
-
-const isNilOrEmpty = R.either(R.isNil, R.isEmpty)
-
-const checkConfig = function (config) {
-  if (isNilOrEmpty(config)) {
-    throw new Error('config配置是必须的,需要执行.init')
-  }
-  const keys = R.keys(config)
-  const needKeys = ['accessKeyId', 'secretAccessKey', 'endpoint', 'instancename']
-  if (!R.equals(keys, needKeys)) {
-    throw new Error('config配置项错误， 必须包含： accessKeyId， secretAccessKey， endpoint， instancename')
+  const schema = Joi.object().keys({
+    tableName: Joi.string().required(),
+    primaryKey: Joi.array().items(Joi.object().required()).required(),
+    maxVersions: Joi.number().integer().required()
+  })
+  const result = Joi.validate(data, schema)// , (err, value) => {
+  if (result.error) {
+    console.log(`出现错误：${result.error.details[0]['message']}, 请确认参数是否已经合理设定！`)
+    throw new Error(result.error)
   }
   return true
-}
-
-const checkParamTableName = function (data) {
-  if (isNilOrEmpty(R.path(['params', 'tableName'], data))) {
-    throw new Error('table配置是必须，需要执行.table')
-  }
-  if (!R.is(String, R.path(['params', 'tableName'], data))) {
-    throw new Error('table配置必须是一个字符串')
-  }
-  return true
-}
-
-const checkParamKey = function (data) {
-  if (isNilOrEmpty(R.path(['params', 'primaryKey'], data))) {
-    throw new Error('keys配置是必须，需要执行.table')
-  }
-  if (!R.is(Object, R.path(['params', 'primaryKey'], data))) {
-    throw new Error('keys配置必须是一个Object')
-  }
-  return true
-}
-
-const checkParamStartKeys = function (data) {
-  throw new Error('start配置是必须的，需要执行.startKeys')
-}
-
-const test = function (data) {
-  return 'hello world'
 }
 
 module.exports = {
-  test,
   orm,
-  isNilOrEmpty,
   checkConfig,
-  checkParamTableName,
-  checkParamKey,
-  checkParamStartKeys,
-  checkDataForGet,
-  checkDataForRange
+  checkDataForGet
 }
