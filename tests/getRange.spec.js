@@ -1,5 +1,34 @@
 const mod = require('../index')
 const TableStore = require('tablestore')
+const demoData = require('./demo-return-data.js')
+
+describe('检查formatRow', () => {
+  it('检查数据为空或null事后，原样返回数据', () => {
+    expect(mod.formatRow(null)).toBeNull()
+  })
+})
+
+describe('检查formatRange', () => {
+  it('检测数据为空或null进入的处理，应为原样返回', () => {
+    expect(mod.formatRange(null)).toBeNull()
+    expect(mod.formatRange({})).toEqual({})
+  })
+  it('检测Row数据为空或null进入的处理，应为原样返回', () => {
+    const data = {
+      row: {},
+      next_token: null
+    }
+    const dataWithNull = {
+      row: null,
+      next_token: null
+    }
+    expect(mod.formatRange(data)).toEqual(data)
+    expect(mod.formatRange(dataWithNull)).toEqual(dataWithNull)
+  })
+  it('检测Row数据合法的情况下，返回处理好的格式数据', () => {
+    expect(mod.formatRange(demoData.returnData)).toEqual(demoData.formatData)
+  })
+})
 
 describe('检查getRange部分', () => {
   it ('检查direction设定： 给定参数得到正确设定值', () => {

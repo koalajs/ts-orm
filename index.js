@@ -136,9 +136,30 @@ const checkDataForGetRange = function (data) {
   return true
 }
 
+const formatRow = function (row) {
+  if (R.isNil(row) || R.isEmpty(row)) return row
+  const keys = R.reduce((a, v) => {
+    const kv = R.values(v)
+    return R.assoc(kv[0], kv[1], a)
+  }, {}, row.primaryKey)
+  const attributes = R.reduce((a, v) => {
+    const kv = R.values(v)
+    return R.assoc(kv[0], kv[1], a)
+  }, {}, row.attributes)
+  return R.merge(keys, attributes)
+}
+
+const formatRange = function (data) {
+  if (R.isNil(data) || R.isEmpty(data)) return data
+  if (R.isEmpty(data.rows) || R.isNil(data.rows)) return data
+  return R.assoc('rows', R.map(formatRow, data.rows), data)
+}
+
 module.exports = {
   orm,
   checkConfig,
   checkDataForGet,
-  checkDataForGetRange
+  checkDataForGetRange,
+  formatRange,
+  formatRow
 }
