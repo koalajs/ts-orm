@@ -40,6 +40,28 @@ const orm = {
     this.params = R.assoc('primaryKey', primaryKey, this.params)
     return this
   },
+  direction: function (value) {
+    this.params = R.assoc('direction', value, this.params)
+    return this
+  },
+  startKeys: function (keys) {
+    const values = R.reduce((a, v) => {
+      return R.append(R.objOf(v[0], R.is(Number, v[1]) ? Long.fromNumber(v[1]) : v[1]), a)
+    }, [], R.toPairs(keys))
+    this.params = R.assoc('inclusiveStartPrimaryKey', values, this.params)
+    return this
+  },
+  endKeys: function (keys) {
+    const values = R.reduce((a, v) => {
+      return R.append(R.objOf(v[0], R.is(Number, v[1]) ? Long.fromNumber(v[1]) : v[1]), a)
+    }, [], R.toPairs(keys))
+    this.params = R.assoc('exclusiveEndPrimaryKey', values, this.params)
+    return this
+  },
+  limit: function (value) {
+    this.params = R.assoc('limit', value, this.params)
+    return this
+  },
   getRow: function () {
     checkConfig(this.config)
     checkDataForGet(this.params)
@@ -51,7 +73,21 @@ const orm = {
           reject(err)
         })
       } catch (err) {
-        console.log('出错了:' + err.message)
+        reject(err)
+      }
+    })
+  },
+  getRange: function () {
+    checkConfig(this.config)
+    checkDataForGetRange(this.params)
+    return new Promise((resolve, reject) => {
+      try {
+        client(this.config).then(ts => ts.getRange(this.params)).then(data => {
+          resolve(data)
+        }).catch(err => {
+          reject(err)
+        })
+      } catch (err) {
         reject(err)
       }
     })
@@ -67,7 +103,6 @@ const checkConfig = function (data) {
   })
   const result = Joi.validate(data, schema)// , (err, value) => {
   if (result.error) {
-    console.log(`出现错误：${result.error.details[0]['message']}, 请确认参数是否已经合理设定！`)
     throw new Error(result.error)
   }
   return true
@@ -81,7 +116,21 @@ const checkDataForGet = function (data) {
   })
   const result = Joi.validate(data, schema)// , (err, value) => {
   if (result.error) {
-    console.log(`出现错误：${result.error.details[0]['message']}, 请确认参数是否已经合理设定！`)
+    throw new Error(result.error)
+  }
+  return true
+}
+
+const checkDataForGetRange = function (data) {
+  const schema = Joi.object().keys({
+    tableName: Joi.string().required(),
+    direction: Joi.string().valid(TableStore.Direction.FORWARD, TableStore.Direction.BACKWARD).required(),
+    inclusiveStartPrimaryKey: Joi.array().items(Joi.object().required()).required(),
+    exclusiveEndPrimaryKey: Joi.array().items(Joi.object().required()).required(),
+    limit: Joi.number().integer()
+  })
+  const result = Joi.validate(data, schema)
+  if (result.error) {
     throw new Error(result.error)
   }
   return true
@@ -90,5 +139,6 @@ const checkDataForGet = function (data) {
 module.exports = {
   orm,
   checkConfig,
-  checkDataForGet
+  checkDataForGet,
+  checkDataForGetRange
 }

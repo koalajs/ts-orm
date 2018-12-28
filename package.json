@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "joi": "^14.3.0",
+    "protobufjs": "^6.8.8",
     "ramda": "^0.26.1",
     "tablestore": "^4.1.0"
   },
