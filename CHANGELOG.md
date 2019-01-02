@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.1"></a>
+## [0.1.1](https://github.com/koalajs/ts-orm/compare/v0.1.0...v0.1.1) (2019-01-02)
+
+
+
+<a name="0.0.7"></a>
+## [0.0.7](https://github.com/koalajs/ts-orm/compare/v0.0.6...v0.0.7) (2018-12-28)
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/koalajs/ts-orm/compare/v0.0.8...v0.1.0) (2018-12-28)
 
