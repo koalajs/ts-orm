@@ -1,6 +1,6 @@
 {
   "name": "@koala.js/ts-orm",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "a orm project for alicloud tablestore",
   "main": "index.js",
   "scripts": {
