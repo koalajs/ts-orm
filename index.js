@@ -40,6 +40,14 @@ const orm = {
     this.params = R.assoc('primaryKey', primaryKey, this.params)
     return this
   },
+  attr: function (keys) {
+    this.params = R.assoc('attributeColumns', keys, this.params)
+    return this
+  },
+  returnContent: function (key) {
+    this.params = R.assoc('returnContent', key, this.params)
+    return this
+  },
   direction: function (value) {
     this.params = R.assoc('direction', value, this.params)
     return this
@@ -61,6 +69,9 @@ const orm = {
   limit: function (value) {
     this.params = R.assoc('limit', value, this.params)
     return this
+  },
+  condition: function (value) {
+    this.params = R.assoc('condition', value, this.params)
   },
   getRow: function () {
     checkConfig(this.config)
@@ -91,6 +102,21 @@ const orm = {
         reject(err)
       }
     })
+  },
+  putRow: function () {
+    checkConfig(this.config)
+    checkDataForPutRow(this.params)
+    return new Promise((resolve, reject) => {
+      try {
+        client(this.config).then(ts => ts.putRow(this.params)).then(data => {
+          resolve(data)
+        }).catch(err => {
+          reject(err)
+        })
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }
 
@@ -102,6 +128,20 @@ const checkConfig = function (data) {
     instancename: Joi.string().required()
   })
   const result = Joi.validate(data, schema)// , (err, value) => {
+  if (result.error) {
+    throw new Error(result.error)
+  }
+  return true
+}
+
+const checkDataForPutRow = function (data) {
+  const schema = Joi.object().keys({
+    tableName: Joi.string().required(),
+    primaryKey: Joi.array().items(Joi.object().required()),
+    attributeColumns: Joi.array().items(Joi.object().required()),
+    returnContent: Joi.string().required()
+  })
+  const result = Joi.validate(data, schema)
   if (result.error) {
     throw new Error(result.error)
   }
@@ -160,6 +200,7 @@ module.exports = {
   checkConfig,
   checkDataForGet,
   checkDataForGetRange,
+  checkDataForPutRow,
   formatRange,
   formatRow
 }
