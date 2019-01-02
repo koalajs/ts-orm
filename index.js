@@ -117,6 +117,21 @@ const orm = {
         reject(err)
       }
     })
+  },
+  deleteRow: function () {
+    checkConfig(this.config)
+    checkDataForDeleteRow(this.params)
+    return new Promise((resolve, reject) => {
+      try {
+        client(this.config).then(ts => ts.deleteRow(this.params)).then(data => {
+          resolve(data)
+        }).catch(err => {
+          reject(err)
+        })
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 }
 
@@ -140,6 +155,19 @@ const checkDataForPutRow = function (data) {
     primaryKey: Joi.array().items(Joi.object().required()),
     attributeColumns: Joi.array().items(Joi.object().required()),
     returnContent: Joi.string().required()
+  })
+  const result = Joi.validate(data, schema)
+  if (result.error) {
+    throw new Error(result.error)
+  }
+  return true
+}
+
+const checkDataForDeleteRow = function (data) {
+  const schema = Joi.object().keys({
+    tableName: Joi.string().required(),
+    primaryKey: Joi.array().items(Joi.object().required()).required(),
+    condition: Joi.string().required()
   })
   const result = Joi.validate(data, schema)
   if (result.error) {
@@ -201,6 +229,7 @@ module.exports = {
   checkDataForGet,
   checkDataForGetRange,
   checkDataForPutRow,
+  checkDataForDeleteRow,
   formatRange,
   formatRow
 }
