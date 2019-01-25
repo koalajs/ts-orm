@@ -153,9 +153,10 @@ const checkConfig = function (data) {
 const checkDataForPutRow = function (data) {
   const schema = Joi.object().keys({
     tableName: Joi.string().required(),
+    condition: Joi.object().required(),
     primaryKey: Joi.array().items(Joi.object().required()),
     attributeColumns: Joi.array().items(Joi.object().required()),
-    returnContent: Joi.string().required()
+    returnContent: Joi.object().required()
   })
   const result = Joi.validate(data, schema)
   if (result.error) {
