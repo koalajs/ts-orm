@@ -16,6 +16,10 @@ describe('测试公共部分', () => {
     mod.orm.table(value)
     expect(mod.orm.params.tableName).toBe(value)
   })
+  it ('检查Clear设定： 得到空的params', () => {
+    mod.orm.clear()
+    expect(mod.orm.params).toEqual({})
+  })
   it('检查checkConfig，给定正确的参数， 通过', () => {
     const data = {
       accessKeyId: 'xxx',

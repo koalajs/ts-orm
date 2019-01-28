@@ -74,6 +74,10 @@ const orm = {
     this.params = R.assoc('condition', value, this.params)
     return this
   },
+  clear: function () {
+    this.params = {}
+    return this
+  },
   getRow: function () {
     checkConfig(this.config)
     checkDataForGet(this.params)
